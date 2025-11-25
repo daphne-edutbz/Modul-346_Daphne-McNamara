@@ -1,0 +1,15 @@
+#cloud-config # Beginn der Cloud-init Datei
+users: # Liste von Benutzern
+  - name: ubuntu # Benutzername
+    groups: [users, admin] # Gruppen, die den Nutzer zugeordnet sind
+    shell: /bin/bash # Standard-shell für benutzer
+    sudo: ALL=(ALL) NOPASSWD:ALL # sudo-Regeln für Benutzer, ohne passwort abfrage
+    ssh_authorized_keys: # Liste der Public-Keys die zugang haben
+# der Public SSH-Key
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0WGP1EZykEtv5YGC9nMiPFW3U3DmZNzKFO5nEu6uozEHh4jLZzPNHSrfFTuQ2GnRDSt+XbOtTLdcj26+iPNiFoFha42aCIzYjt6V8Z+SQ9pzF4jPPzxwXfDdkEWylgoNnZ+4MG1lNFqa8aO7F62tX0Yj5khjC0Bs7Mb2cHLx1XZaxJV6qSaulDuBbLYe8QUZXkMc7wmob3PM0kflfolR3LE7LResIHWa4j4FL6r5cQmFlDU2BDPpKMFMGUfRSFiUtaWBNXFOWHQBC2+uKmuMPYP4vJC9sBgqMvPN/X2KyemqdMvdKXnCfrzadHuSSJYEzD64Cve5Zl9yVvY4AqyBD aws-key
+ssh_pwauth: false # deaktiviert Passwort-login per SSH (nur Schlüssel erlaubt)
+disable_root: false # Root-Login ist erlaubt
+package_update: true # führt update direkt aus, packet wird aktuell gemacht
+packages: # Liste der Pakete die installiert werden sollten 
+  - curl # installiert curl (tool -> ruft URLs ab)
+  - wget # installiert wget (ähnlich wie curl, CLI download tool)
