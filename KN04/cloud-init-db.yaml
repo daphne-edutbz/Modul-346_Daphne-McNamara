@@ -1,20 +1,25 @@
 #cloud-config
-users :
-- name: ubuntu
-groups: [users, admin]
-shell: /bin/bash
-sudo: "ALL=(ALL) NOPASSWD:ALL"
-ssh_authorized_keys:
-- ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1u9HFk1gRjYMGlJ+CZgMsfyNS/owEmKtvoaNYOt4mbafOLarz5C2d+no/1IwqHd9WNuI2FC4GHnNhO>
-- ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0WGP1EZykEtv5YGC9nMiPFW3U3DmZNzKFO5nEu6uozEHh4jLZzPNHSrfFTuQ2GnRDSt+XbOtTLdcj26+iPNiFoFha42aCIzYjt6V8Z+SQ9pzF4jPPzxwXfDdkEWylgoNnZ+4MG1lNFqa8aO7F62tX0Yj5khjC0Bs7Mb2cHLx1XZaxJV6qSaulDuBbLYe8QUZXkMc7wmob3PM0kflfolR3LE7LResIHWa4j4FL6r5cQmFlDU2BDPpKMFMGUfRSFiUtaWBNXFOWHQBC2+uKmuMPYP4vJC9sBgqMvPN/X2KyemqdMvdKXnCfrzadHuSSJYEzD64Cve5Zl9yVvY4AqyBD
+
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1u9HFk1gRjYMGlJ+CZgMsfyNS/owEmKtvoaNYOt4mbafOLarz5C2d+no/1IwqHd9WNuI2FC4GHnNhO002yVK9RXwnZYgK9MbZo6SMAq1pxzQVno9Dzpt3LsHOteRziMIKpPr3q7OS3/CKpNd1Fz4hduT3xBHXjPmJLhI4Nzg3HI670/rW3iuDEtsRE7IC/fIsaVNIq6itLYLNoGKYzMC7Cb/yIt7ShbOdLH1luQjgJIogK2Q+Qx2AVEE0zwohQHeCkmEU7OR6V46Y3R4jxp54IvSCV4OApquKOfSrkZk62QIg7elliQYq9argpqvhlJsxwIaRfKmRid2nZOzdEozr aws-key-Daphne
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0WGP1EZykEtv5YGC9nMiPFW3U3DmZNzKFO5nEu6uozEHh4jLZzPNHSrfFTuQ2GnRDSt+XbOtTLdcj26+iPNiFoFha42aCIzYjt6V8Z+SQ9pzF4jPPzxwXfDdkEWylgoNnZ+4MG1lNFqa8aO7F62tX0Yj5khjC0Bs7Mb2cHLx1XZaxJV6qSaulDuBbLYe8QUZXkMc7wmob3PM0kflfolR3LE7LResIHWa4j4FL6r5cQmFlDU2BDPpKMFMGUfRSFiUtaWBNXFOWHQBC2+uKmuMPYP4vJC9sBgqMvPN/X2KyemqdMvdKXnCfrzadHuSSJYEzD64Cve5Zl9yVvY4AqyBD aws-key-NUY
 
 ssh_pwauth: false
 disable_root: false
+
 package_update: true
 packages:
-  - curl
-  - wget
   - mariadb-server
+
 runcmd:
-  - sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/mariadb.conf.d/50-server.cnf
-  - sudo systemctl restart mariadb
+  - sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/mariadb.conf.d/50-server.cnf
+  - systemctl restart mariadb
+  - mysql -e "CREATE DATABASE kn05_db;"
+  - mysql -e "CREATE USER 'kn05_user'@'%' IDENTIFIED BY 'kn05password';"
+  - mysql -e "GRANT ALL PRIVILEGES ON kn05_db.* TO 'kn05_user'@'%';"
+  - mysql -e "FLUSH PRIVILEGES;"
