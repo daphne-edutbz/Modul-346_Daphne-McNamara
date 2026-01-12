@@ -1,0 +1,56 @@
+#cloud-config
+
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-rsa
+        AAAAB3NzaC1yc2EAAAADAQABAAABAQC1u9HFk1gRjYMGlJ+CZgMsfyNS/owEmKtvoaNYOt4mbafOLarz5C2d+no/1IwqHd9WNuI2FC4GHnNhO002yVK9RXwnZYgK9MbZo6SMAq1pxzQVno9Dzpt3LsHOteRziMIKpPr3q7OS3/CKpNd1Fz4hduT3xBHXjPmJLhI4Nzg3HI670/rW3iuDEtsRE7IC/fIsaVNIq6itLYLNoGKYzMC7Cb/yIt7ShbOdLH1luQjgJIogK2Q+Qx2AVEE0zwohQHeCkmEU7OR6V46Y3R4jxp54IvSCV4OApquKOfSrkZk62QIg7elliQYq9argpqvhlJsxwIaRfKmRid2nZOzdEozr
+        aws-key-Daphne
+      - ssh-rsa
+        AAAAB3NzaC1yc2EAAAADAQABAAABAQC0WGP1EZykEtv5YGC9nMiPFW3U3DmZNzKFO5nEu6uozEHh4jLZzPNHSrfFTuQ2GnRDSt+XbOtTLdcj26+iPNiFoFha42aCIzYjt6V8Z+SQ9pzF4jPPzxwXfDdkEWylgoNnZ+4MG1lNFqa8aO7F62tX0Yj5khjC0Bs7Mb2cHLx1XZaxJV6qSaulDuBbLYe8QUZXkMc7wmob3PM0kflfolR3LE7LResIHWa4j4FL6r5cQmFlDU2BDPpKMFMGUfRSFiUtaWBNXFOWHQBC2+uKmuMPYP4vJC9sBgqMvPN/X2KyemqdMvdKXnCfrzadHuSSJYEzD64Cve5Zl9yVvY4AqyBD
+        aws-key-NUY
+
+ssh_pwauth: false
+disable_root: false
+
+package_update: true
+packages:
+  - apache2
+  - php8.2
+  - libapache2-mod-php8.2
+  - php8.2-mysqli
+  - adminer
+
+write_files:
+  - path: /var/www/html/index.html
+    owner: www-data:www-data
+    permissions: '0644'
+    content: |
+      <h1>KN05 Webserver läuft!</h1>
+
+  - path: /var/www/html/info.php
+    owner: www-data:www-data
+    permissions: '0644'
+    content: |
+      <?php phpinfo(); ?>
+
+  - path: /var/www/html/db.php
+    owner: www-data:www-data
+    permissions: '0644'
+    content: |
+      <?php
+      $conn = new mysqli("172.31.32.20", "kn05_user", "kn05password", "kn05_db");
+      if ($conn->connect_error) { die("Connection failed: " . $conn->connect_error); }
+      echo "Connected successfully";
+      ?>
+
+runcmd:
+  - apt-get update -y
+  - apt-get install -y apache2 php8.2 libapache2-mod-php8.2 php8.2-mysqli adminer
+  - a2enmod php8.2
+  - a2enconf adminer
+  - systemctl enable apache2
+  - systemctl restart apache2
